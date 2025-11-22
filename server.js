@@ -8,13 +8,16 @@ async function startServer(port, origin) {
   app.use(async (req, res) => {
     const cacheKey = req.originalUrl;
 
-    // Check cache
+    // Check cache (with TTL)
     const cachedResponse = getCache(cacheKey);
+
     if (cachedResponse) {
-      console.log("CACHE HIT:", cacheKey);
-      res.setHeader("X-Cache", "HIT");
+      console.log(`⚡ HIT: ${cacheKey}`);
+      res.set("X-Cache", "HIT");
       return res.status(200).send(cachedResponse);
     }
+
+    console.log(`🔄 MISS: ${cacheKey}`);
 
     // Fetch from origin
     try {

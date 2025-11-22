@@ -2,17 +2,24 @@
 
 const { program } = require("commander");
 const startServer = require("./server");
-const { clearCache } = require("./cache");
+const { clearCache, setTTL } = require("./cache");
 
 // Define CLI options
 program
   .option("--port <number>", "Port to run proxy server on")
   .option("--origin <url>", "Origin server URL")
-  .option("--clear-cache", "Clear cached data");
+  .option("--clear-cache", "Clear cached data")
+  .option("--ttl <seconds>", "Cache expiration time in seconds");
 
 // Parse CLI arguments
 program.parse(process.argv);
 const options = program.opts();
+
+// If TTL provided, configure it
+if (options.ttl) {
+  setTTL(options.ttl);
+  console.log(`⏱️ Cache TTL set to ${options.ttl} seconds`);
+}
 
 // If user wants to clear cache
 if (options.clearCache) {
