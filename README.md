@@ -224,13 +224,3 @@ Header: X-Cache: MISS
 
 MIT License © 2025
 
----
-
-If you want, I can also generate:
-
-✅ A **nice project logo (AI image)**
-✅ A **GitHub-ready description**
-✅ A **demo GIF preview**
-✅ A **more advanced README** with diagrams
-
-Just tell me!
