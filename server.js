@@ -4,42 +4,38 @@ const express = require("express");
 const axios = require("axios");
 const { getCache, setCache } = require("./cache");
 
-// Function to start the proxy server
 async function startServer(port, origin) {
   const app = express();
 
-  // Handle all routes (any URL path)
   app.use(async (req, res) => {
-    const cacheKey = req.originalUrl; // example: /products
+    const cacheKey = req.originalUrl;
 
-    // Check if response exists in cache
+    // Check cache
     const cachedResponse = getCache(cacheKey);
     if (cachedResponse) {
-      res.set("X-Cache", "HIT"); // Add header showing cache hit
+      console.log("CACHE HIT:", cacheKey);
+      res.setHeader("X-Cache", "HIT");
       return res.status(200).send(cachedResponse);
     }
 
-    // If not cached, fetch from origin server
+    // Fetch from origin
     try {
       const response = await axios.get(`${origin}${req.originalUrl}`);
       const data = response.data;
 
-      // Save to cache for next time
       setCache(cacheKey, data);
 
-      // Add header showing cache miss
-      res.set("X-Cache", "MISS");
+      console.log("CACHE MISS:", cacheKey);
+      res.setHeader("X-Cache", "MISS");
       res.status(response.status).send(data);
-    } catch (error) {
-      // Handle any error from origin server
-      res.status(500).send(`Error: ${error.message}`);
+    } catch (err) {
+      res.status(500).send("Error: " + err.message);
     }
   });
 
-  // Start the server
   app.listen(port, () => {
     console.log(`🚀 Caching Proxy running on http://localhost:${port}`);
-    console.log(`🔗 Forwarding requests to: ${origin}`);
+    console.log(`🔗 Forwarding to: ${origin}`);
   });
 }
 

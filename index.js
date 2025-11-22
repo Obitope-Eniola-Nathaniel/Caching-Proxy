@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { program } = require("commander");
 const startServer = require("./server");
 const { clearCache } = require("./cache");
